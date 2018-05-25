@@ -9,7 +9,10 @@ namespace This_Is_War
 {
     class Player: INotifyPropertyChanged
     {
+        readonly Random rand = new Random();
         List<Card> cards;
+        int score;
+
         public List<Card> Cards
         {
             get
@@ -19,15 +22,16 @@ namespace This_Is_War
             set
             {
                 cards = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Number"));
+                Notify(nameof(Number));
             }
         }
+
         public int Number { get
             {
                 return Cards.Count;
             }
         }
-        int score;
+
         public int Score { get
             {
                 return score;
@@ -35,25 +39,29 @@ namespace This_Is_War
             set
             {
                 score = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Score"));
+                Notify(nameof(Score));
             }
         }
-        Random rand = new Random();
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        void Notify(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
 
         public Player(List<Card> cards, int score)
         {
             Cards = cards;
             Score = score;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Number"));
+            Notify(nameof(Number));
         }
 
         public Card DrawRandomCard()
         {
             Card card = Cards[rand.Next(0, Cards.Count)];
             Cards.Remove(card);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Number"));
+            Notify(nameof(Number));
             return card;
         }
     }

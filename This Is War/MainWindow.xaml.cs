@@ -20,7 +20,7 @@ namespace This_Is_War
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<Card> cards = new List<Card>();
+        readonly List<Card> cards = new List<Card>();
         Player p1;
         Player p2;
 
@@ -30,16 +30,16 @@ namespace This_Is_War
             InitializeCards();
             InitializePlayers();
         }
-        
+
         private void InitializeCards()
         {
-            BitmapImage cardsImage = new BitmapImage(new Uri("C:\\Users\\adamw\\source\\repos\\This Is War\\This Is War\\cards.jpg"));
+            BitmapImage cardsImage = new BitmapImage(new Uri("cards.jpg", UriKind.Relative));
 
             for (int i = 0; i < 13; i++)
             {
                 for (int j = 0; j < 4; j++)
                 {
-                    cards.Add(new Card("", i, new CroppedBitmap(cardsImage, 
+                    cards.Add(new Card("", i, new CroppedBitmap(cardsImage,
                         new Int32Rect(i * 225, j * 315, 225, 315))));
                 }
             }
@@ -112,12 +112,20 @@ namespace This_Is_War
 
         private void CreateDecks(out List<Card> p1Cards, out List<Card> p2Cards)
         {
+            List<Card> cardsCopy = new List<Card>(cards);
+            Random rand = new Random();
+
             p1Cards = new List<Card>();
             p2Cards = new List<Card>();
             for (int i = 0; i < 26; i++)
             {
-                p1Cards.Add(cards[2 * i]);
-                p2Cards.Add(cards[51 - (2 * i + 1)]);
+                Card card1 = cardsCopy[rand.Next(0, cardsCopy.Count)];
+                cardsCopy.Remove(card1);
+                Card card2 = cardsCopy[rand.Next(0, cardsCopy.Count)];
+                cardsCopy.Remove(card2);
+
+                p1Cards.Add(card1);
+                p2Cards.Add(card2);
             }
         }
 
