@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -9,28 +10,11 @@ namespace This_Is_War
 {
     class Player: INotifyPropertyChanged
     {
-        readonly Random rand = new Random();
-        List<Card> cards;
         int score;
 
-        public List<Card> Cards
-        {
-            get
-            {
-                return cards;
-            }
-            set
-            {
-                cards = value;
-                Notify(nameof(Count));
-            }
-        }
-
-        public int Count { get
-            {
-                return Cards.Count;
-            }
-        }
+        public string Name { get; set; }
+        public ObservableCollection<Card> Cards { get; set; }
+        public Stack<Card> Stack { get; set; } = new Stack<Card>();
 
         public int Score { get
             {
@@ -50,19 +34,27 @@ namespace This_Is_War
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public Player(List<Card> cards, int score)
+        public Player(ObservableCollection<Card> cards, int score, string name)
         {
             Cards = cards;
             Score = score;
-            Notify(nameof(Count));
+            Name = name;
         }
 
-        public Card DrawRandomCard()
+        public Card DrawCard()
         {
-            Card card = Cards[rand.Next(0, Cards.Count)];
+            Card card = Cards[0];
             Cards.Remove(card);
-            Notify(nameof(Count));
             return card;
+        }
+
+        public void SetDeck(ObservableCollection<Card> cards)
+        {
+            Cards.Clear();
+            foreach (var card in cards)
+            {
+                Cards.Add(card);
+            }
         }
     }
 }

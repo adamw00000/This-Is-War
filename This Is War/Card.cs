@@ -12,9 +12,9 @@ namespace This_Is_War
     {
         public string Color { get; set; }
         public int Number { get; set; }
-        public CroppedBitmap Image { get; set; }
+        public ImageSource Image { get; set; }
 
-        public Card(string c, int n, CroppedBitmap i)
+        public Card(string c, int n, ImageSource i)
         {
             Color = c;
             Number = n;

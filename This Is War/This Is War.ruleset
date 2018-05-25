@@ -68,5 +68,6 @@
     <Rule Id="RCS1018" Action="None" />
     <Rule Id="RCS1057" Action="None" />
     <Rule Id="RCS1079" Action="None" />
+    <Rule Id="RCS1218" Action="None" />
   </Rules>
 </RuleSet>
