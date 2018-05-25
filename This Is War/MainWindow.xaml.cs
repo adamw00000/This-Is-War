@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,23 +53,19 @@ namespace This_Is_War
             p1 = new Player(p1Cards, 0);
             p2 = new Player(p2Cards, 0);
 
-            p1Number.DataContext = p1;
-            p2Number.DataContext = p2;
-            p1Score.DataContext = p1;
-            p2Score.DataContext = p2;
+            p1Panel.DataContext = p1;
+            p2Panel.DataContext = p2;
         }
 
         private void War(object sender, MouseButtonEventArgs e)
         {
-            CheckCards();
+            DrawCards();
         }
 
-        private void CheckCards()
+        private void DrawCards()
         {
-            if (p1.Number == 0 || p2.Number == 0)
+            if (p1.Count == 0 || p2.Count == 0)
             {
-                p1Image.Visibility = Visibility.Hidden;
-                p2Image.Visibility = Visibility.Hidden;
                 return;
             }
             Card p1Card = p1.DrawRandomCard();
@@ -76,6 +73,11 @@ namespace This_Is_War
             p1Image.Source = p1Card.Image;
             p2Image.Source = p2Card.Image;
 
+            UpdateScore(p1Card, p2Card);
+        }
+
+        private void UpdateScore(Card p1Card, Card p2Card)
+        {
             if (p1Card.Number > p2Card.Number)
             {
                 p1.Score++;
@@ -91,11 +93,6 @@ namespace This_Is_War
                 if (WarBox.IsChecked.Value)
                     MessageBox.Show("War!");
             }
-            if (p1.Number == 0 || p2.Number == 0)
-            {
-                p1Image.Visibility = Visibility.Hidden;
-                p2Image.Visibility = Visibility.Hidden;
-            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -106,8 +103,6 @@ namespace This_Is_War
 
             p1Image.Source = null;
             p2Image.Source = null;
-            p1Image.Visibility = Visibility.Visible;
-            p2Image.Visibility = Visibility.Visible;
         }
 
         private void CreateDecks(out List<Card> p1Cards, out List<Card> p2Cards)
@@ -131,10 +126,26 @@ namespace This_Is_War
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            while (p1.Number > 0 && p2.Number > 0)
+            while (p1.Count > 0 && p2.Count > 0)
             {
-                CheckCards();
+                DrawCards();
             }
+        }
+    }
+
+    class CountToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            int count = (int)value;
+            if (count == 0)
+                return Visibility.Hidden;
+            return Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

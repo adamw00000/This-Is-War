@@ -22,11 +22,11 @@ namespace This_Is_War
             set
             {
                 cards = value;
-                Notify(nameof(Number));
+                Notify(nameof(Count));
             }
         }
 
-        public int Number { get
+        public int Count { get
             {
                 return Cards.Count;
             }
@@ -54,14 +54,14 @@ namespace This_Is_War
         {
             Cards = cards;
             Score = score;
-            Notify(nameof(Number));
+            Notify(nameof(Count));
         }
 
         public Card DrawRandomCard()
         {
             Card card = Cards[rand.Next(0, Cards.Count)];
             Cards.Remove(card);
-            Notify(nameof(Number));
+            Notify(nameof(Count));
             return card;
         }
     }

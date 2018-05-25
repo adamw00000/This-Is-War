@@ -7,6 +7,8 @@
         mc:Ignorable="d"
         Title="This is war" Height="450" Width="800" MinHeight="400" MinWidth="600">
     <Window.Resources>
+        <local:CountToVisibilityConverter x:Key="countToVisibilityConverter"/>
+
         <BitmapImage UriSource="back1.png" x:Key="Back"/>
         <BitmapImage UriSource="cards.jpg" x:Key="CardSheet"/>
 
@@ -30,58 +32,58 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Label FontSize="30" Grid.Column="2" Content="{Binding Score}"
-                   Name="p1Score"/>
-            <Label FontSize="30" Grid.Column="4" Content="{Binding Score}"
-                   Name="p2Score"/>
-        </Grid>
-        <Grid Grid.Row="1" Margin="0,50,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid Name="p1Panel">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel>
-                    <Label Width="100" Height="150" MouseDown="War">
+                <Label FontSize="30" Grid.Column="1" HorizontalContentAlignment="Center" Content="{Binding Score}"
+                        Margin="0,0,0,50"/>
+                <StackPanel Grid.Row="1">
+                    <Label Width="100" Height="150" MouseDown="War"
+                           Visibility="{Binding Count, Converter={StaticResource countToVisibilityConverter}}">
                         <Image Source="{StaticResource Back}" Style="{StaticResource cardEffect}"/>
                     </Label>
                     <Label Name="p1Number" HorizontalContentAlignment="Center" 
-                       Content="{Binding Number}"/>
+                       Content="{Binding Count}"/>
                 </StackPanel>
-                <Image Grid.Column="1" Name="p1Image" Width="100" Height="150" VerticalAlignment="Top"/>
+                <Image Grid.Row="1" Grid.Column="1" Name="p1Image" Width="100" Height="150" VerticalAlignment="Top"/>
             </Grid>
             <Grid Grid.Column="1" Name="p2Panel">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Name="p2Image" Width="100" Height="150" VerticalAlignment="Top"/>
-                <StackPanel Grid.Column="1">
-                    <Label Width="100" Height="150" MouseDown="War">
+                <Label FontSize="30" HorizontalContentAlignment="Center" Content="{Binding Score}" 
+                       Margin="0,0,0,50"/>
+                <Image Grid.Row="1" Name="p2Image" Width="100" Height="150" VerticalAlignment="Top"/>
+                <StackPanel Grid.Row="1" Grid.Column="1">
+                    <Label Width="100" Height="150" MouseDown="War"
+                           Visibility="{Binding Count, Converter={StaticResource countToVisibilityConverter}}">
                         <Image Source="{StaticResource Back}" Style="{StaticResource cardEffect}"/>
                     </Label>
                     <Label Name="p2Number" HorizontalContentAlignment="Center" 
-                       Content="{Binding Number}"/>
+                       Content="{Binding Count}"/>
                 </StackPanel>
             </Grid>
         </Grid>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
