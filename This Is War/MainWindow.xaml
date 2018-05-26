@@ -45,60 +45,61 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid Name="p1Panel">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Name="p1Score" FontSize="30" HorizontalContentAlignment="Center" 
+                       Content="{Binding Score}"/>
+
+                <Label Name="p2Score" FontSize="30" Grid.Column="1" HorizontalContentAlignment="Center" 
+                       Content="{Binding Score}"/>
+            </Grid>
+            <Grid Grid.Row="1" VerticalAlignment="Top">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Label FontSize="30" Grid.Column="1" HorizontalContentAlignment="Center" Content="{Binding Score}"/>
-                <Grid Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Label Name="pushLabel"/>
-                    <Image Name="p1MovingBack" Source="{Binding CurrentBack}" Width="100" Height="150"
-                           Visibility="{Binding ElementName=p1Label, Path=DataContext.Cards.Count,
-                                Converter={StaticResource countToVisibilityConverter}}"/>
-                    <Image Name="p1Back" Source="{Binding CurrentBack}" Style="{StaticResource cardEffect}"
-                           Width="100" Height="150" MouseDown="NextTurn"
-                           Visibility="{Binding ElementName=p1Label, Path=DataContext.Cards.Count,
-                                Converter={StaticResource countToVisibilityConverter}}"/>
-                    <Label Grid.Row="1" Name="p1Label" HorizontalContentAlignment="Center" Content="{Binding Cards.Count}" FontSize="20"/>
-                </Grid>
-                <Image Grid.Row="1" Grid.Column="1" Name="p1Image" Width="100" Height="150" VerticalAlignment="Top"/>
-            </Grid>
-            <Grid Grid.Column="1" Name="p2Panel">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="2*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Label FontSize="30" HorizontalContentAlignment="Center" Content="{Binding Score}"/>
-                <Image Grid.Row="1" Name="p2Image" Width="100" Height="150" VerticalAlignment="Top"/>
-                <Grid Grid.Row="1" Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Image Name="p2Back" Source="{Binding CurrentBack}" Style="{StaticResource cardEffect}"
-                           Width="100" Height="150" MouseDown="NextTurn"
-                           Visibility="{Binding ElementName=p2Label, Path=DataContext.Cards.Count, 
-                                Converter={StaticResource countToVisibilityConverter}}"/>
-                    <Label Grid.Row="1" Name="p2Label" HorizontalContentAlignment="Center" Content="{Binding Cards.Count}" FontSize="20"/>
-                </Grid>
+                <Image Name="p1MovingBack" Source="{Binding CurrentBack}" Width="100" Height="150"
+                        Panel.ZIndex="2"/>
+                
+                <Image Name="p1Back" Source="{Binding CurrentBack}" Style="{StaticResource cardEffect}"
+                        Width="100" Height="150" MouseDown="NextTurn" Panel.ZIndex="3"
+                        Visibility="{Binding ElementName=p1Label, Path=DataContext.Cards.Count,
+                            Converter={StaticResource countToVisibilityConverter}}"/>
+                <Label Grid.Row="1" Name="p1Label" HorizontalContentAlignment="Center" Content="{Binding Deck.Count}" FontSize="20"/>
+                    
+                <Image Grid.Column="1" Name="p1Image" Width="100" Height="150" Panel.ZIndex="1"
+                        Source="{Binding CurrentImage}"/>
+                <Image Grid.Column="1" Name="p1PreviousImage" Width="100" Height="150" Panel.ZIndex="0"
+                           Source="{Binding PreviousImage}"/>
+
+
+                <Image Name="p2Image" Width="100" Height="150" Panel.ZIndex="1" Grid.Column="2"
+                        Source="{Binding CurrentImage}"/>
+                <Image Name="p2PreviousImage" Width="100" Height="150" Panel.ZIndex="0"  Grid.Column="2"
+                        Source="{Binding PreviousImage}"/>
+
+                <Image Grid.Column="3" Name="p2Back" Source="{Binding CurrentBack}" Style="{StaticResource cardEffect}"
+                        Width="100" Height="150" MouseDown="NextTurn"  Panel.ZIndex="3"
+                        Visibility="{Binding ElementName=p2Label, Path=DataContext.Cards.Count, 
+                            Converter={StaticResource countToVisibilityConverter}}"/>
+                <Label Grid.Row="1" Grid.Column="3"  Name="p2Label" HorizontalContentAlignment="Center" 
+                        Content="{Binding Deck.Count}" FontSize="20"/>
+
+                <Image Name="p2MovingBack" Source="{Binding CurrentBack}" Width="100" Height="150" Grid.Column="2"
+                           Panel.ZIndex="2"/>
             </Grid>
         </Grid>
         <Grid Grid.Row="1" Name="sliders" Margin="10">
@@ -133,13 +134,14 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Margin="10" Width="100" Height="30" Click="Reset">Reset</Button>
-            <Button Margin="10" Width="100" Height="30" Grid.Column="1"
+            <Button Margin="10" Width="100" Height="30" Click="Reset" Name="resetButton"
+                    >Reset</Button>
+            <Button Margin="10" Width="100" Height="30" Grid.Column="1" Name="skipButton"
                     Click="SkipToEnd">Skip to end</Button>
-            <Button Margin="10" Width="100" Height="30" Grid.Column="2"
-                    Click="ChangeBack">Change back</Button>
-            <Button Margin="10" Width="100" Height="30" Grid.Column="3"
+            <Button Margin="10" Width="100" Height="30" Grid.Column="2" Name="simulateButton"
                     Click="Simulate">Simulate</Button>
+            <Button Margin="10" Width="100" Height="30" Grid.Column="3" Name="changeBackButton"
+                    Click="ChangeBack">Change back</Button>
             <CheckBox Width="100" Height="20" Grid.Column="5" Name="WarBox">Show wars</CheckBox>
         </Grid>
         <TabControl Grid.Column="1" Grid.RowSpan="2">
@@ -149,8 +151,8 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ListBox ItemsSource="{Binding Cards}" Name="p1Deck" ItemTemplate="{StaticResource cardListTemplate}"/>
-                    <ListBox Grid.Column="1" ItemsSource="{Binding Cards}" Name="p2Deck" ItemTemplate="{StaticResource cardListTemplate}"/>
+                    <ListBox ItemsSource="{Binding Deck}" Name="p1Deck" ItemTemplate="{StaticResource cardListTemplate}"/>
+                    <ListBox Grid.Column="1" ItemsSource="{Binding Deck}" Name="p2Deck" ItemTemplate="{StaticResource cardListTemplate}"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Highscores" Name="highscoreTab">

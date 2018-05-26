@@ -5,6 +5,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace This_Is_War
 {
@@ -13,8 +15,40 @@ namespace This_Is_War
         int score;
 
         public string Name { get; set; }
-        public ObservableCollection<Card> Cards { get; set; }
+        public Image Image { get; set; }
+        public Image Back { get; set; }
+        public Image MovingBack { get; set; }
+        public ObservableCollection<Card> Deck { get; set; }
         public Stack<Card> Stack { get; set; } = new Stack<Card>();
+
+        ImageSource currentImage;
+        ImageSource previousImage;
+
+        public Card CurrentCard { get; set; }
+        public ImageSource CurrentImage
+        {
+            get
+            {
+                return currentImage;
+            }
+            set
+            {
+                currentImage = value;
+                Notify(nameof(CurrentImage));
+            }
+        }
+        public ImageSource PreviousImage
+        {
+            get
+            {
+                return previousImage;
+            }
+            set
+            {
+                previousImage = value;
+                Notify(nameof(PreviousImage));
+            }
+        }
 
         public int Score { get
             {
@@ -34,26 +68,29 @@ namespace This_Is_War
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public Player(ObservableCollection<Card> cards, int score, string name)
+        public Player(ObservableCollection<Card> cards, int score, string name, Image image, Image back, Image movingBack)
         {
-            Cards = cards;
+            Deck = cards;
             Score = score;
             Name = name;
+            Image = image;
+            Back = back;
+            MovingBack = movingBack;
         }
 
         public Card DrawCard()
         {
-            Card card = Cards[0];
-            Cards.Remove(card);
+            Card card = Deck[0];
+            Deck.Remove(card);
             return card;
         }
 
         public void SetDeck(ObservableCollection<Card> cards)
         {
-            Cards.Clear();
+            Deck.Clear();
             foreach (var card in cards)
             {
-                Cards.Add(card);
+                Deck.Add(card);
             }
         }
     }
