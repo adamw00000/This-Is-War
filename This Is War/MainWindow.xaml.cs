@@ -79,26 +79,21 @@ namespace This_Is_War
             }
         }
 
+        void Notify(string name)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+
         public MainWindow()
         {
             InitializeComponent();
             InitializeCards();
             InitializePlayers();
 
-            highscoreTab.DataContext = Highscores;
-            sliders.DataContext = p1Back.DataContext = p2Back.DataContext =
-                p1MovingBack.DataContext = p2MovingBack.DataContext = this;
-            CurrentBack = new BitmapImage(new Uri("back1.png", UriKind.Relative));
-            MoveSpeed = 1;
-            RotateSpeed = 1;
-            p1MovingBack.Visibility = p2MovingBack.Visibility = Visibility.Hidden;
+            InitializeBindings();
         }
 
-        void Notify(string name)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-
+        #region Initialization
         private void InitializeCards()
         {
             BitmapImage cardsImage = new BitmapImage(new Uri("cards.jpg", UriKind.Relative));
@@ -120,12 +115,24 @@ namespace This_Is_War
             p1 = new Player(p1Cards, 0, "Left", p1Image, p1Back, p1MovingBack);
             p2 = new Player(p2Cards, 0, "Right", p2Image, p2Back, p2MovingBack);
 
-            p1Deck.DataContext = p1;// p1Panel.DataContext = p1;
-            p2Deck.DataContext = p2;//p2Panel.DataContext = p2;
+            p1Deck.DataContext = p1;
+            p2Deck.DataContext = p2;
 
             p1Score.DataContext = p1Label.DataContext = p1Image.DataContext = p1PreviousImage.DataContext = p1;
             p2Score.DataContext = p2Label.DataContext = p2Image.DataContext = p2PreviousImage.DataContext = p2;
         }
+
+        private void InitializeBindings()
+        {
+            highscoreTab.DataContext = Highscores;
+            sliders.DataContext = p1Back.DataContext = p2Back.DataContext =
+                p1MovingBack.DataContext = p2MovingBack.DataContext = this;
+            CurrentBack = new BitmapImage(new Uri("back1.png", UriKind.Relative));
+            MoveSpeed = 1;
+            RotateSpeed = 1;
+            p1MovingBack.Visibility = p2MovingBack.Visibility = Visibility.Hidden;
+        }
+        #endregion
 
         private void NextTurn(object sender, MouseButtonEventArgs e)
         {
@@ -154,11 +161,11 @@ namespace This_Is_War
             }
         }
 
+        #region Fight
         private void Fight()
         {
             DrawNextCard();
 
-            //TODO: Move animation
             if (animated)
             {
                 Move(p1.MovingBack, p1.Back, p1.Image, null);
@@ -170,6 +177,16 @@ namespace This_Is_War
             }
         }
 
+        private void DrawNextCard()
+        {
+            p1.CurrentCard = p1.DrawCard();
+            p2.CurrentCard = p2.DrawCard();
+
+            p1.Stack.Push(p1.CurrentCard);
+            p2.Stack.Push(p2.CurrentCard);
+        }
+
+        #region Standard Move Animation
         private void Move(Image target, Image startingImage, Image endImage, Action<object, EventArgs> OnMoveEnd)
         {
             CreateMove(target, startingImage, endImage, out DoubleAnimation moveAnim, out TranslateTransform tt);
@@ -203,11 +220,10 @@ namespace This_Is_War
             tt = new TranslateTransform();
             target.RenderTransform = tt;
         }
+        #endregion
 
         private void DrawFirstCard(object sender, EventArgs e)
         {
-            //TODO: Rotate animation
-
             p1.CurrentImage = p1.CurrentCard.Image;
             p2.CurrentImage = p2.CurrentCard.Image;
 
@@ -222,6 +238,7 @@ namespace This_Is_War
             }
         }
 
+        #region Standard Rotate Animation
         private void RotateImage(Image target, Action<object, EventArgs> OnRotationEnd)
         {
             p1.MovingBack.Visibility = Visibility.Hidden;
@@ -248,6 +265,7 @@ namespace This_Is_War
             target.RenderTransformOrigin = new Point(0.5, 0.5);
             target.RenderTransform = st;
         }
+        #endregion
 
         private void EndStandardBattle(object sender, EventArgs e)
         {
@@ -258,15 +276,6 @@ namespace This_Is_War
 
                 WarFirstPhase();
             }
-        }
-
-        private void DrawNextCard()
-        {
-            p1.CurrentCard = p1.DrawCard();
-            p2.CurrentCard = p2.DrawCard();
-
-            p1.Stack.Push(p1.CurrentCard);
-            p2.Stack.Push(p2.CurrentCard);
         }
 
         private bool CheckResult(Card p1Card, Card p2Card)
@@ -285,15 +294,15 @@ namespace This_Is_War
             }
             return false;
         }
+        #endregion
 
+        #region War
         private void WarFirstPhase()
         {
             if (EndOnEmptyDeck())
                 return;
 
             DrawNextCard();
-
-            //TODO: Move animation
 
             if (animated)
             {
@@ -316,7 +325,6 @@ namespace This_Is_War
 
             DrawNextCard();
 
-            //TODO: Move animation
             if (animated)
             {
                 Move(p1.MovingBack, p1.Back, p1.Image, null);
@@ -330,7 +338,6 @@ namespace This_Is_War
 
         private void WarThirdPhase(object arg1, EventArgs arg2)
         {
-            //TODO: Rotate animation
             p1.PreviousImage = CurrentBack;
             p2.PreviousImage = CurrentBack;
             p1.CurrentImage = p1.CurrentCard.Image;
@@ -381,38 +388,10 @@ namespace This_Is_War
             Loser = loser;
 
             RotateLoserStack(this, EventArgs.Empty);
-            //while (loser.Stack.Count != 0)
-            //{
-            //    //if (loser.Stack.Count % 2 == 1)
-            //    //{
-            //    //    loser.CurrentImage = CurrentBack;
-
-            //    //    RotateImage(loser.Image, null);
-            //    //    //TODO: Rotate animation
-            //    //}
-            //    ////TODO: Move animation
-            //    //Move(loser.MovingBack, loser.Image, loser.Back, null);
-
-            //    winner.Cards.Add(loser.Stack.Pop());
-            //    winner.Score++;
-            //}
-            //while (winner.Stack.Count != 0)
-            //{
-            //    //if (winner.Stack.Count % 2 == 1)
-            //    //{
-            //    //    winner.CurrentImage = CurrentBack;
-
-            //    //    RotateImage(winner.Image, null);
-            //    //    //TODO: Rotate animation
-            //    //}
-            //    ////TODO: Move animation
-            //    //Move(winner.MovingBack, winner.Image, winner.Back, null);
-
-            //    winner.Cards.Add(winner.Stack.Pop());
-            //    winner.Score++;
-            //}
         }
+        #endregion
 
+        #region End War Animations And Logic
         private void RotateLoserStack(object sender, EventArgs e)
         {
             if (!animated)
@@ -436,7 +415,7 @@ namespace This_Is_War
         private void MoveLoserStack(object sender, EventArgs e)
         {
             Loser.PreviousImage = null;
-            //TU SIE WYWALA -------------------------------------------------------------------------------------------------------------------
+
             Winner.Deck.Add(Loser.Stack.Pop());
             Winner.Score++;
 
@@ -571,7 +550,9 @@ namespace This_Is_War
 
             tt.BeginAnimation(TranslateTransform.XProperty, moveAnim);
         }
+        #endregion
 
+        #region Button Logic
         private void Reset(object sender, RoutedEventArgs e)
         {
             CreateDecks(out ObservableCollection<Card> p1Cards, out ObservableCollection<Card> p2Cards);
@@ -647,8 +628,10 @@ namespace This_Is_War
             if (p1Back.IsEnabled)
                 DrawCards();
         }
+        #endregion
     }
 
+    #region Converters
     class CountToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -664,4 +647,5 @@ namespace This_Is_War
             throw new NotImplementedException();
         }
     }
+    #endregion
 }

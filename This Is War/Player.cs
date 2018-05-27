@@ -21,10 +21,9 @@ namespace This_Is_War
         public ObservableCollection<Card> Deck { get; set; }
         public Stack<Card> Stack { get; set; } = new Stack<Card>();
 
-        ImageSource currentImage;
-        ImageSource previousImage;
-
         public Card CurrentCard { get; set; }
+
+        ImageSource currentImage;
         public ImageSource CurrentImage
         {
             get
@@ -37,6 +36,7 @@ namespace This_Is_War
                 Notify(nameof(CurrentImage));
             }
         }
+        ImageSource previousImage;
         public ImageSource PreviousImage
         {
             get
