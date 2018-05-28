@@ -158,6 +158,7 @@ namespace This_Is_War
                 int pos = Highscores.IndexOf(Highscores.FirstOrDefault(h => h.Result < winner.Score));
                 Highscores.Insert(pos != -1 ? pos : Highscores.Count,
                     new Highscore(winner.Name, winner.Score));
+                p1Back.IsEnabled = p2Back.IsEnabled = true;
             }
         }
 
@@ -529,7 +530,6 @@ namespace This_Is_War
                 if (!simulating)
                 {
                     p1Back.IsEnabled = p2Back.IsEnabled = true;
-
                     resetButton.IsEnabled = skipButton.IsEnabled = true;
 
                     if (p1.Deck.Count == 0 || p2.Deck.Count == 0)
