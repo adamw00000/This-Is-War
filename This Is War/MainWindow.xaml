@@ -76,7 +76,7 @@
                 
                 <Image Name="p1Back" Source="{Binding CurrentBack}" Style="{StaticResource cardEffect}"
                         Width="100" Height="150" MouseDown="NextTurn" Panel.ZIndex="3"
-                        Visibility="{Binding ElementName=p1Label, Path=DataContext.Cards.Count,
+                        Visibility="{Binding ElementName=p1Label, Path=DataContext.Deck.Count,
                             Converter={StaticResource countToVisibilityConverter}}"/>
                 <Label Grid.Row="1" Name="p1Label" HorizontalContentAlignment="Center" Content="{Binding Deck.Count}" FontSize="20"/>
                     
@@ -93,7 +93,7 @@
 
                 <Image Grid.Column="3" Name="p2Back" Source="{Binding CurrentBack}" Style="{StaticResource cardEffect}"
                         Width="100" Height="150" MouseDown="NextTurn"  Panel.ZIndex="3"
-                        Visibility="{Binding ElementName=p2Label, Path=DataContext.Cards.Count, 
+                        Visibility="{Binding ElementName=p2Label, Path=DataContext.Deck.Count, 
                             Converter={StaticResource countToVisibilityConverter}}"/>
                 <Label Grid.Row="1" Grid.Column="3"  Name="p2Label" HorizontalContentAlignment="Center" 
                         Content="{Binding Deck.Count}" FontSize="20"/>

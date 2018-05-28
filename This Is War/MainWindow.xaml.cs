@@ -202,6 +202,9 @@ namespace This_Is_War
 
         private void CreateMove(Image target, Image startingImage, Image endImage, out DoubleAnimation moveAnim, out TranslateTransform tt)
         {
+            p1.MovingBack.Visibility = Visibility.Hidden;
+            p2.MovingBack.Visibility = Visibility.Hidden;
+
             double currentX = target.TransformToAncestor(Application.Current.MainWindow).Transform(new Point(0, 0)).X
                 - target.RenderTransform.Value.OffsetX;
             double startX = startingImage.TransformToAncestor(Application.Current.MainWindow).Transform(new Point(0, 0)).X;
@@ -241,9 +244,6 @@ namespace This_Is_War
         #region Standard Rotate Animation
         private void RotateImage(Image target, Action<object, EventArgs> OnRotationEnd)
         {
-            p1.MovingBack.Visibility = Visibility.Hidden;
-            p2.MovingBack.Visibility = Visibility.Hidden;
-
             CreateRotation(target, out DoubleAnimation rotateAnim, out ScaleTransform st);
 
             if (OnRotationEnd != null)
@@ -254,6 +254,9 @@ namespace This_Is_War
 
         private void CreateRotation(Image target, out DoubleAnimation rotateAnim, out ScaleTransform st)
         {
+            p1.MovingBack.Visibility = Visibility.Hidden;
+            p2.MovingBack.Visibility = Visibility.Hidden;
+
             rotateAnim = new DoubleAnimation()
             {
                 From = -1,
@@ -402,8 +405,6 @@ namespace This_Is_War
             Loser.CurrentImage = CurrentBack;
             if (Loser.Stack.Count > 1)
                 Loser.PreviousImage = CurrentBack;
-            p1.MovingBack.Visibility = Visibility.Hidden;
-            p2.MovingBack.Visibility = Visibility.Hidden;
 
             CreateRotation(Loser.Image, out DoubleAnimation rotateAnim, out ScaleTransform st);
 
@@ -471,8 +472,6 @@ namespace This_Is_War
             Winner.CurrentImage = CurrentBack;
             if (Winner.Stack.Count > 1)
                 Winner.PreviousImage = CurrentBack;
-            p1.MovingBack.Visibility = Visibility.Hidden;
-            p2.MovingBack.Visibility = Visibility.Hidden;
 
             CreateRotation(Winner.Image, out DoubleAnimation rotateAnim, out ScaleTransform st);
 
@@ -483,6 +482,9 @@ namespace This_Is_War
 
         private void MoveWinnerStack(object sender, EventArgs e)
         {
+            p1.MovingBack.Visibility = Visibility.Hidden;
+            p2.MovingBack.Visibility = Visibility.Hidden;
+
             Winner.PreviousImage = null;
             Winner.Deck.Add(Winner.Stack.Pop());
             Winner.Score++;
