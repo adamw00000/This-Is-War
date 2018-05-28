@@ -180,11 +180,8 @@ namespace This_Is_War
 
         private void DrawNextCard()
         {
-            p1.CurrentCard = p1.DrawCard();
-            p2.CurrentCard = p2.DrawCard();
-
-            p1.Stack.Push(p1.CurrentCard);
-            p2.Stack.Push(p2.CurrentCard);
+            p1.DrawCard();
+            p2.DrawCard();
         }
 
         #region Standard Move Animation
@@ -447,9 +444,13 @@ namespace This_Is_War
             if (Loser.Stack.Count != 0)
             {
                 if (Loser.Stack.Count % 2 == 0)
+                {
                     moveAnim.Completed += (o, ee) => MoveLoserStack(o, ee);
+                }
                 else
+                {
                     moveAnim.Completed += (o, ee) => RotateLoserStack(o, ee);
+                }
             }
             else
             {

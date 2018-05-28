@@ -21,7 +21,12 @@ namespace This_Is_War
         public ObservableCollection<Card> Deck { get; set; }
         public Stack<Card> Stack { get; set; } = new Stack<Card>();
 
-        public Card CurrentCard { get; set; }
+        public Card CurrentCard {
+        get
+            {
+                return Stack.Peek();
+            }
+        }
 
         ImageSource currentImage;
         public ImageSource CurrentImage
@@ -78,11 +83,11 @@ namespace This_Is_War
             MovingBack = movingBack;
         }
 
-        public Card DrawCard()
+        public void DrawCard()
         {
             Card card = Deck[0];
             Deck.Remove(card);
-            return card;
+            Stack.Push(card);
         }
 
         public void SetDeck(ObservableCollection<Card> cards)
