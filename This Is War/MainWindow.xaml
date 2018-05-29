@@ -5,14 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:This_Is_War"
         mc:Ignorable="d"
-        Title="This is war" Height="600" Width="1000" MinHeight="600" MinWidth="1000">
+        Title="This is war" Height="600" Width="1000" MinHeight="600" MinWidth="1000" 
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <local:CountToVisibilityConverter x:Key="countToVisibilityConverter"/>
 
         <BitmapImage UriSource="back1.png" x:Key="Back"/>
         <BitmapImage UriSource="cards.jpg" x:Key="CardSheet"/>
 
+        <Style TargetType="Image">
+            <Setter Property="Stretch" Value="Fill"/>
+        </Style>
+
         <Style TargetType="Image" x:Key="cardEffect">
+            <Setter Property="Stretch" Value="Fill"/>
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect/>
