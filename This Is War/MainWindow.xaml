@@ -156,10 +156,10 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Highscores" Name="highscoreTab">
-                <ListBox ItemsSource="{Binding}">
+                <ListBox ItemsSource="{Binding}" HorizontalContentAlignment="Stretch">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Grid Width="233">
+                            <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
