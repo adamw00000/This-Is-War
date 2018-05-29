@@ -141,6 +141,8 @@ namespace This_Is_War
 
         private void DrawCards()
         {
+            HideMovingBacks();
+
             if (p1.Deck.Count == 0 || p2.Deck.Count == 0)
             {
                 simulateButton.IsEnabled = skipButton.IsEnabled = false;
@@ -162,6 +164,12 @@ namespace This_Is_War
             }
         }
 
+        private void HideMovingBacks()
+        {
+            p1.MovingBack.Visibility = Visibility.Hidden;
+            p2.MovingBack.Visibility = Visibility.Hidden;
+        }
+
         #region Fight
         private void Fight()
         {
@@ -170,11 +178,11 @@ namespace This_Is_War
             if (animated)
             {
                 Move(p1.MovingBack, p1.Back, p1.Image, null);
-                Move(p2.MovingBack, p2.Back, p2.Image, DrawFirstCard);
+                Move(p2.MovingBack, p2.Back, p2.Image, StartStandardBattle);
             }
             else
             {
-                DrawFirstCard(this, EventArgs.Empty);
+                StartStandardBattle(this, EventArgs.Empty);
             }
         }
 
@@ -223,8 +231,9 @@ namespace This_Is_War
         }
         #endregion
 
-        private void DrawFirstCard(object sender, EventArgs e)
+        private void StartStandardBattle(object sender, EventArgs e)
         {
+            HideMovingBacks();
             p1.CurrentImage = p1.CurrentCard.Image;
             p2.CurrentImage = p2.CurrentCard.Image;
 
@@ -318,6 +327,7 @@ namespace This_Is_War
 
         private void WarSecondPhase(object arg1, EventArgs arg2)
         {
+            HideMovingBacks();
             p1.CurrentImage = CurrentBack;
             p2.CurrentImage = CurrentBack;
 
@@ -339,6 +349,7 @@ namespace This_Is_War
 
         private void WarThirdPhase(object arg1, EventArgs arg2)
         {
+            HideMovingBacks();
             p1.PreviousImage = CurrentBack;
             p2.PreviousImage = CurrentBack;
             p1.CurrentImage = p1.CurrentCard.Image;
@@ -484,8 +495,7 @@ namespace This_Is_War
 
         private void MoveWinnerStack(object sender, EventArgs e)
         {
-            p1.MovingBack.Visibility = Visibility.Hidden;
-            p2.MovingBack.Visibility = Visibility.Hidden;
+            HideMovingBacks();
 
             Winner.PreviousImage = null;
             Winner.Deck.Add(Winner.Stack.Pop());
@@ -530,6 +540,8 @@ namespace This_Is_War
 
                 if (!simulating)
                 {
+                    moveAnim.Completed += (o, ee) => HideMovingBacks();
+
                     p1Back.IsEnabled = p2Back.IsEnabled = true;
                     resetButton.IsEnabled = skipButton.IsEnabled = true;
 

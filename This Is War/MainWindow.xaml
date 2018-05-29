@@ -31,7 +31,7 @@
         </Style>
 
         <DataTemplate x:Key="cardListTemplate">
-            <Image Source="{Binding Image}" Width="95"/>
+            <Image Source="{Binding Image}" Width="90"/>
         </DataTemplate>
     </Window.Resources>
     <Grid>
