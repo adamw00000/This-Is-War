@@ -551,7 +551,6 @@ namespace This_Is_War
                 {
                     SkipEndWarCleanup();
                 }
-
                 CheckForWinner();
             }
         }
@@ -577,14 +576,14 @@ namespace This_Is_War
 
         private void SimulationEndWarCleanup()
         {
-            DrawCards();
-
             if (p1.Deck.Count == 0 || p2.Deck.Count == 0)
             {
                 simulateButton.Content = "Simulate";
                 simulating = false;
                 resetButton.IsEnabled = true;
             }
+            else
+                DrawCards();
         }
         #endregion
 
