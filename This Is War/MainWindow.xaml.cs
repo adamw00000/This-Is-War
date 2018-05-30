@@ -177,8 +177,8 @@ namespace This_Is_War
 
             if (animated)
             {
-                Move(p1.MovingBack, p1.Back, p1.Image, null);
-                Move(p2.MovingBack, p2.Back, p2.Image, StartStandardBattle);
+                Move(p1, p1.Back, p1.Image, null);
+                Move(p2, p2.Back, p2.Image, StartStandardBattle);
             }
             else
             {
@@ -193,24 +193,20 @@ namespace This_Is_War
         }
 
         #region Standard Move Animation
-        private void Move(Image target, Image startingImage, Image endImage, Action<object, EventArgs> OnMoveEnd)
+        private void Move(Player target, Image startingImage, Image endImage, Action<object, EventArgs> OnMoveEnd)
         {
-            CreateMove(target, startingImage, endImage, out DoubleAnimation moveAnim, out TranslateTransform tt);
+            CreateMove(target.MovingBack, startingImage, endImage, out DoubleAnimation moveAnim, out TranslateTransform tt);
 
             if (OnMoveEnd != null)
                 moveAnim.Completed += (o, e) => OnMoveEnd(o, e);
 
-            p1.MovingBack.Visibility = Visibility.Visible;
-            p2.MovingBack.Visibility = Visibility.Visible;
+            target.MovingBack.Visibility = Visibility.Visible;
 
             tt.BeginAnimation(TranslateTransform.XProperty, moveAnim);
         }
 
         private void CreateMove(Image target, Image startingImage, Image endImage, out DoubleAnimation moveAnim, out TranslateTransform tt)
         {
-            p1.MovingBack.Visibility = Visibility.Hidden;
-            p2.MovingBack.Visibility = Visibility.Hidden;
-
             double currentX = target.TransformToAncestor(Application.Current.MainWindow).Transform(new Point(0, 0)).X
                 - target.RenderTransform.Value.OffsetX;
             double startX = startingImage.TransformToAncestor(Application.Current.MainWindow).Transform(new Point(0, 0)).X;
@@ -234,13 +230,13 @@ namespace This_Is_War
         private void StartStandardBattle(object sender, EventArgs e)
         {
             HideMovingBacks();
-            p1.CurrentImage = p1.CurrentCard.Image;
-            p2.CurrentImage = p2.CurrentCard.Image;
+            p1.CurrentImage = CurrentBack;
+            p2.CurrentImage = CurrentBack;
 
             if (animated)
             {
-                RotateImage(p1.Image, null);
-                RotateImage(p2.Image, EndStandardBattle);
+                RotateImage(p1, p1.CurrentCard.Image, null);
+                RotateImage(p2, p2.CurrentCard.Image, EndStandardBattle);
             }
             else
             {
@@ -249,31 +245,51 @@ namespace This_Is_War
         }
 
         #region Standard Rotate Animation
-        private void RotateImage(Image target, Action<object, EventArgs> OnRotationEnd)
+        private void RotateImage(Player target, ImageSource newImage, Action<object, EventArgs> OnRotationEnd)
         {
-            CreateRotation(target, out DoubleAnimation rotateAnim, out ScaleTransform st);
-
-            if (OnRotationEnd != null)
-                rotateAnim.Completed += (o, e) => OnRotationEnd(o, e);
+            CreateRotationFirstPart(target, out DoubleAnimation rotateAnim, out ScaleTransform st);
+            
+            rotateAnim.Completed += (o, e) => CreateRotationSecondPart(target, newImage, OnRotationEnd);
 
             st.BeginAnimation(ScaleTransform.ScaleXProperty, rotateAnim);
         }
 
-        private void CreateRotation(Image target, out DoubleAnimation rotateAnim, out ScaleTransform st)
+        private void CreateRotationFirstPart(Player target, out DoubleAnimation rotateAnim, out ScaleTransform st)
         {
             p1.MovingBack.Visibility = Visibility.Hidden;
             p2.MovingBack.Visibility = Visibility.Hidden;
 
             rotateAnim = new DoubleAnimation()
             {
-                From = -1,
-                To = 1,
-                Duration = new Duration(TimeSpan.Parse($"0:0:{RotateSpeed:N2}")),
-                EasingFunction = new QuarticEase()
+                From = 1,
+                To = 0,
+                Duration = new Duration(TimeSpan.Parse($"0:0:{RotateSpeed/2:N2}")),
+                EasingFunction = new QuarticEase() { EasingMode=EasingMode.EaseIn  }
             };
             st = new ScaleTransform();
-            target.RenderTransformOrigin = new Point(0.5, 0.5);
-            target.RenderTransform = st;
+            target.Image.RenderTransformOrigin = new Point(0.5, 0.5);
+            target.Image.RenderTransform = st;
+        }
+
+        private void CreateRotationSecondPart(Player target, ImageSource newImage, Action<object, EventArgs> OnRotationEnd)
+        {
+            target.CurrentImage = newImage;
+
+            DoubleAnimation rotateAnim = new DoubleAnimation()
+            {
+                From = 0,
+                To = 1,
+                Duration = new Duration(TimeSpan.Parse($"0:0:{RotateSpeed / 2:N2}")),
+                EasingFunction = new QuarticEase() { EasingMode = EasingMode.EaseOut }
+            };
+            ScaleTransform st = new ScaleTransform();
+            target.Image.RenderTransformOrigin = new Point(0.5, 0.5);
+            target.Image.RenderTransform = st;
+
+            if (OnRotationEnd != null)
+                rotateAnim.Completed += (o, e) => OnRotationEnd(o, e);
+
+            st.BeginAnimation(ScaleTransform.ScaleXProperty, rotateAnim);
         }
         #endregion
 
@@ -316,8 +332,8 @@ namespace This_Is_War
 
             if (animated)
             {
-                Move(p1.MovingBack, p1.Back, p1.Image, null);
-                Move(p2.MovingBack, p2.Back, p2.Image, WarSecondPhase);
+                Move(p1, p1.Back, p1.Image, null);
+                Move(p2, p2.Back, p2.Image, WarSecondPhase);
             }
             else
             {
@@ -338,8 +354,8 @@ namespace This_Is_War
 
             if (animated)
             {
-                Move(p1.MovingBack, p1.Back, p1.Image, null);
-                Move(p2.MovingBack, p2.Back, p2.Image, WarThirdPhase);
+                Move(p1, p1.Back, p1.Image, null);
+                Move(p2, p2.Back, p2.Image, WarThirdPhase);
             }
             else
             {
@@ -352,13 +368,13 @@ namespace This_Is_War
             HideMovingBacks();
             p1.PreviousImage = CurrentBack;
             p2.PreviousImage = CurrentBack;
-            p1.CurrentImage = p1.CurrentCard.Image;
-            p2.CurrentImage = p2.CurrentCard.Image;
+            //p1.CurrentImage = CurrentBack;
+            //p2.CurrentImage = CurrentBack;
 
             if (animated)
             {
-                RotateImage(p1.Image, null);
-                RotateImage(p2.Image, WarFourthPhase);
+                RotateImage(p1, p1.CurrentCard.Image, null);
+                RotateImage(p2, p2.CurrentCard.Image, WarFourthPhase);
             }
             else
             {
@@ -399,8 +415,10 @@ namespace This_Is_War
             Winner = winner;
             Loser = loser;
 
-            RotateLoserStack(this, EventArgs.Empty);
+            CollectCards();
         }
+
+        void CollectCards() => RotateLoserStack(this, EventArgs.Empty);
         #endregion
 
         #region End War Animations And Logic
@@ -411,15 +429,11 @@ namespace This_Is_War
                 MoveLoserStack(this, EventArgs.Empty);
                 return;
             }
-            Loser.CurrentImage = CurrentBack;
+
             if (Loser.Stack.Count > 1)
                 Loser.PreviousImage = CurrentBack;
 
-            CreateRotation(Loser.Image, out DoubleAnimation rotateAnim, out ScaleTransform st);
-
-            rotateAnim.Completed += (o, ee) => MoveLoserStack(o, ee);
-
-            st.BeginAnimation(ScaleTransform.ScaleXProperty, rotateAnim);
+            RotateImage(Loser, CurrentBack, MoveLoserStack);
         }
 
         private void MoveLoserStack(object sender, EventArgs e)
@@ -429,49 +443,40 @@ namespace This_Is_War
             Winner.Deck.Add(Loser.Stack.Pop());
             Winner.Score++;
 
+            if (Loser.Stack.Count == 0)
+                Loser.CurrentImage = null;
+
             if (!animated)
             {
-                if (Loser.Stack.Count != 0)
-                {
-                    if (Loser.Stack.Count % 2 == 0)
-                        MoveLoserStack(this, EventArgs.Empty);
-                    else
-                        RotateLoserStack(this, EventArgs.Empty);
-                }
-                else
-                {
-                    Loser.CurrentImage = null;
-                    RotateWinnerStack(this, EventArgs.Empty);
-                }
-
+                LoserStackNextAction();
                 return;
             }
 
             if (Loser.Stack.Count % 2 == 1)
                 Loser.CurrentImage = Loser.CurrentCard.Image;
 
-            CreateMove(Loser.MovingBack, Loser.Image, Winner.Back, out DoubleAnimation moveAnim, out TranslateTransform tt);
+            Loser.MovingBack.Visibility = Visibility.Visible;
 
+            Move(Loser, Loser.Image, Winner.Back, (o, ee) =>
+            {
+                HideMovingBacks();
+                LoserStackNextAction();
+            });
+        }
+
+        private void LoserStackNextAction()
+        {
             if (Loser.Stack.Count != 0)
             {
                 if (Loser.Stack.Count % 2 == 0)
-                {
-                    moveAnim.Completed += (o, ee) => MoveLoserStack(o, ee);
-                }
+                    MoveLoserStack(this, EventArgs.Empty);
                 else
-                {
-                    moveAnim.Completed += (o, ee) => RotateLoserStack(o, ee);
-                }
+                    RotateLoserStack(this, EventArgs.Empty);
             }
             else
             {
-                Loser.CurrentImage = null;
-                moveAnim.Completed += (o, ee) => RotateWinnerStack(o, ee);
+                RotateWinnerStack(this, EventArgs.Empty);
             }
-
-            Loser.MovingBack.Visibility = Visibility.Visible;
-
-            tt.BeginAnimation(TranslateTransform.XProperty, moveAnim);
         }
 
         private void RotateWinnerStack(object sender, EventArgs e)
@@ -481,89 +486,100 @@ namespace This_Is_War
                 MoveWinnerStack(this, EventArgs.Empty);
                 return;
             }
-
-            Winner.CurrentImage = CurrentBack;
+            
             if (Winner.Stack.Count > 1)
                 Winner.PreviousImage = CurrentBack;
 
-            CreateRotation(Winner.Image, out DoubleAnimation rotateAnim, out ScaleTransform st);
-
-            rotateAnim.Completed += (o, ee) => MoveWinnerStack(o, ee);
-
-            st.BeginAnimation(ScaleTransform.ScaleXProperty, rotateAnim);
+            RotateImage(Winner, CurrentBack, MoveWinnerStack);
         }
 
         private void MoveWinnerStack(object sender, EventArgs e)
         {
-            HideMovingBacks();
-
             Winner.PreviousImage = null;
+
             Winner.Deck.Add(Winner.Stack.Pop());
             Winner.Score++;
 
+            if (Winner.Stack.Count == 0)
+            {
+                Winner.CurrentImage = null;
+            }
+
             if (!animated)
             {
-                if (Winner.Stack.Count != 0)
-                {
-                    if (Winner.Stack.Count % 2 == 0)
-                        MoveWinnerStack(this, EventArgs.Empty);
-                    else
-                        RotateWinnerStack(this, EventArgs.Empty);
-                }
-                else
-                {
-                    Winner.CurrentImage = null;
-                    p1Back.IsEnabled = p2Back.IsEnabled = true;
-                    resetButton.IsEnabled = skipButton.IsEnabled = true;
-                    if (p1.Deck.Count == 0 || p2.Deck.Count == 0)
-                        skipButton.IsEnabled = simulateButton.IsEnabled = false;
-                }
-
+                WinnerStackNextAction();
                 return;
             }
 
             if (Winner.Stack.Count % 2 == 1)
                 Winner.CurrentImage = Winner.CurrentCard.Image;
 
-            CreateMove(Winner.MovingBack, Winner.Image, Winner.Back, out DoubleAnimation moveAnim, out TranslateTransform tt);
+            Winner.MovingBack.Visibility = Visibility.Visible;
 
+            Move(Winner, Winner.Image, Winner.Back, (o, ee) =>
+            {
+                WinnerStackNextAction();
+            });
+        }
+
+        private void WinnerStackNextAction()
+        {
             if (Winner.Stack.Count != 0)
             {
                 if (Winner.Stack.Count % 2 == 0)
-                    moveAnim.Completed += (o, ee) => MoveWinnerStack(o, ee);
+                    MoveWinnerStack(this, EventArgs.Empty);
                 else
-                    moveAnim.Completed += (o, ee) => RotateWinnerStack(o, ee);
+                    RotateWinnerStack(this, EventArgs.Empty);
             }
             else
             {
-                Winner.CurrentImage = null;
-
-                if (!simulating)
+                if (animated)
                 {
-                    moveAnim.Completed += (o, ee) => HideMovingBacks();
-
-                    p1Back.IsEnabled = p2Back.IsEnabled = true;
-                    resetButton.IsEnabled = skipButton.IsEnabled = true;
-
-                    if (p1.Deck.Count == 0 || p2.Deck.Count == 0)
-                        skipButton.IsEnabled = simulateButton.IsEnabled = false;
+                    if (simulating)
+                    {
+                        SimulationEndWarCleanup();
+                    }
+                    else
+                    {
+                        RegularEndWarCleanup();
+                    }
                 }
                 else
                 {
-                    moveAnim.Completed += (o, ee) => DrawCards();
-
-                    if (p1.Deck.Count == 0 || p2.Deck.Count == 0)
-                    {
-                        simulateButton.Content = "Simulate";
-                        simulating = false;
-                        resetButton.IsEnabled = true;
-                    }
+                    SkipEndWarCleanup();
                 }
             }
+        }
 
-            Winner.MovingBack.Visibility = Visibility.Visible;
+        private void SkipEndWarCleanup()
+        {
+            p1Back.IsEnabled = p2Back.IsEnabled = true;
+            resetButton.IsEnabled = skipButton.IsEnabled = true;
+            if (p1.Deck.Count == 0 || p2.Deck.Count == 0)
+                skipButton.IsEnabled = simulateButton.IsEnabled = false;
+        }
 
-            tt.BeginAnimation(TranslateTransform.XProperty, moveAnim);
+        private void RegularEndWarCleanup()
+        {
+            HideMovingBacks();
+
+            p1Back.IsEnabled = p2Back.IsEnabled = true;
+            resetButton.IsEnabled = skipButton.IsEnabled = true;
+
+            if (p1.Deck.Count == 0 || p2.Deck.Count == 0)
+                skipButton.IsEnabled = simulateButton.IsEnabled = false;
+        }
+
+        private void SimulationEndWarCleanup()
+        {
+            DrawCards();
+
+            if (p1.Deck.Count == 0 || p2.Deck.Count == 0)
+            {
+                simulateButton.Content = "Simulate";
+                simulating = false;
+                resetButton.IsEnabled = true;
+            }
         }
         #endregion
 
