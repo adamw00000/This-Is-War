@@ -153,7 +153,10 @@ namespace This_Is_War
             p1Back.IsEnabled = p2Back.IsEnabled = false;
 
             Fight();
-
+        }
+ 
+        private void CheckForWinner()
+        {
             if (p1.Deck.Count == 0 || p2.Deck.Count == 0)
             {
                 Player winner = p1.Score > p2.Score ? p1 : p2;
@@ -548,6 +551,8 @@ namespace This_Is_War
                 {
                     SkipEndWarCleanup();
                 }
+
+                CheckForWinner();
             }
         }
 
@@ -598,6 +603,7 @@ namespace This_Is_War
             p2.CurrentImage = null;
 
             simulateButton.IsEnabled = skipButton.IsEnabled = true;
+            p1Back.IsEnabled = p2Back.IsEnabled = true;
         }
 
         private void CreateDecks(out ObservableCollection<Card> p1Cards, out ObservableCollection<Card> p2Cards)

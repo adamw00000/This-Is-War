@@ -150,7 +150,7 @@
                     Click="ChangeBack">Change back</Button>
             <CheckBox Width="100" Height="20" Grid.Column="5" Name="WarBox">Show wars</CheckBox>
         </Grid>
-        <TabControl Grid.Column="1" Grid.RowSpan="2">
+        <TabControl Grid.Column="1" Grid.RowSpan="3">
             <TabItem Header="Players' cards">
                 <Grid>
                     <Grid.ColumnDefinitions>
