@@ -157,7 +157,8 @@ namespace This_Is_War
  
         private void CheckForWinner()
         {
-            if (p1.Deck.Count == 0 || p2.Deck.Count == 0)
+            if ((p1.Deck.Count == 0 || p2.Deck.Count == 0) && 
+                (p1.Stack.Count == 0 && p2.Stack.Count == 0))
             {
                 Player winner = p1.Score > p2.Score ? p1 : p2;
                 int pos = Highscores.IndexOf(Highscores.FirstOrDefault(h => h.Result < winner.Score));
